@@ -21,7 +21,7 @@ pub fn str_to_ms(s: &str) -> Result<usize, std::num::ParseIntError> {
   Ok(acc)
 }
 
-pub fn ms_to_str(n: usize) -> String {
+pub fn ms_to_string(n: usize) -> String {
   let mut s: Vec<String> = vec![];
 
   let mut r = n as f64;
@@ -95,13 +95,13 @@ mod tests {
 
   #[test]
   fn as_string_simple() {
-    let s = ms_to_str(HOUR);
+    let s = ms_to_string(HOUR);
     assert_eq!(s, "1h");
   }
 
   #[test]
   fn as_string_complex() {
-    let s = ms_to_str(WEEK + 2 * DAY + 7 * HOUR + 14 * MINUTE + 8 * SECOND + 10 * MILLISECOND);
+    let s = ms_to_string(WEEK + 2 * DAY + 7 * HOUR + 14 * MINUTE + 8 * SECOND + 10 * MILLISECOND);
     assert_eq!(s, "1w 2d 7h 14m 8s 10ms");
   }
 }
