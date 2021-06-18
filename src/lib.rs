@@ -4,6 +4,7 @@ mod unit;
 use regex::Regex;
 use lazy_static::lazy_static;
 use crate::unit::Unit;
+use crate::util::constants::*;
 
 pub fn str_to_ms(s: &str) -> Result<usize, std::num::ParseIntError> {
   lazy_static! {
@@ -20,10 +21,59 @@ pub fn str_to_ms(s: &str) -> Result<usize, std::num::ParseIntError> {
   Ok(acc)
 }
 
+pub fn ms_to_str(n: usize) -> String {
+  let mut s: Vec<String> = vec![];
+
+  let mut r = n as f64;
+
+  let u = (r / WEEK as f64).floor();
+  r %= WEEK as f64;
+  if u > 0.0 {
+    let f = format!("{}w", u);
+    s.push(f);
+  }
+
+  let u = (r / DAY as f64).floor();
+  r %= DAY as f64;
+  if u > 0.0 {
+    let f = format!("{}d", u);
+    s.push(f);
+  }
+
+  let u = (r / HOUR as f64).floor();
+  r %= HOUR as f64;
+  if u > 0.0 {
+    let f = format!("{}h", u);
+    s.push(f);
+  }
+
+  let u = (r / MINUTE as f64).floor();
+  r %= MINUTE as f64;
+  if u > 0.0 {
+    let f = format!("{}m", u);
+    s.push(f);
+  }
+
+  let u = (r / SECOND as f64).floor();
+  r %= SECOND as f64;
+  if u > 0.0 {
+    let f = format!("{}s", u);
+    s.push(f);
+  }
+
+  let u = (r / MILLISECOND as f64).floor();
+  // r %= MILLISECOND as f64;
+  if u > 0.0 {
+    let f = format!("{}ms", u);
+    s.push(f);
+  }
+
+  s.join(" ")
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::util::constants::*;
 
   #[test]
   fn two_part_compact() {
@@ -41,5 +91,17 @@ mod tests {
   fn case_insensitive() {
     let t = str_to_ms("100 SECONDS!!!").unwrap();
     assert_eq!(t, 100 * SECOND);
+  }
+
+  #[test]
+  fn as_string_simple() {
+    let s = ms_to_str(HOUR);
+    assert_eq!(s, "1h");
+  }
+
+  #[test]
+  fn as_string_complex() {
+    let s = ms_to_str(WEEK + 2 * DAY + 7 * HOUR + 14 * MINUTE + 8 * SECOND + 10 * MILLISECOND);
+    assert_eq!(s, "1w 2d 7h 14m 8s 10ms");
   }
 }
